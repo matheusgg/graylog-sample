@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+	<!-- https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html -->
+	<springProperty name="applicationName" source="spring.application.name"/>
+
+	<appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
+		<graylogHost>localhost</graylogHost>
+		<graylogPort>5555</graylogPort>
+		<maxChunkSize>508</maxChunkSize>
+		<useCompression>true</useCompression>
+		<layout class="de.siegmar.logbackgelf.GelfLayout">
+			<originHost>localhost</originHost>
+			<includeRawMessage>false</includeRawMessage>
+			<includeMarker>true</includeMarker>
+			<includeMdcData>true</includeMdcData>
+			<includeCallerData>false</includeCallerData>
+			<includeRootCauseData>false</includeRootCauseData>
+			<includeLevelName>false</includeLevelName>
+			<shortPatternLayout class="ch.qos.logback.classic.PatternLayout">
+				<pattern>%m%nopex</pattern>
+			</shortPatternLayout>
+			<fullPatternLayout class="ch.qos.logback.classic.PatternLayout">
+				<pattern>%m</pattern>
+			</fullPatternLayout>
+			<staticField>app_name:${applicationName}</staticField>
+			<staticField>os_arch:${os.arch}</staticField>
+			<staticField>os_name:${os.name}</staticField>
+			<staticField>os_version:${os.version}</staticField>
+		</layout>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="GELF"/>
+	</root>
+</configuration>
